@@ -10,11 +10,11 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarMenuBadge,
 } from '@/components/ui/sidebar';
+import { AppLogo } from '@/components/icons/AppLogo'; // Updated import
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Home, ListCollapse, Users, Zap, Settings, LogOut, Package, CreditCard, Settings2 } from 'lucide-react';
+import { Home, ListCollapse, Users, Zap, Settings2, LogOut } from 'lucide-react'; // Removed Package, CreditCard
 import type { User } from '@/lib/types';
 import { useMockAuth } from '@/hooks/use-mock-auth';
 
@@ -38,8 +38,8 @@ export function AppSidebar({ user }: AppSidebarProps) {
     <Sidebar variant="sidebar" collapsible="icon" side="left" className="border-r">
       <SidebarHeader className="p-4">
         <Link href="/dashboard" className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
-          <Package className="h-8 w-8 text-primary" />
-          <h1 className="text-2xl font-headline font-semibold group-data-[collapsible=icon]:hidden">BlockPay</h1>
+          <AppLogo className="h-8 w-8 text-primary" />
+          <h1 className="text-2xl font-headline font-semibold group-data-[collapsible=icon]:hidden">BlockPay Admin</h1>
         </Link>
       </SidebarHeader>
       <SidebarContent className="flex-1 p-2">

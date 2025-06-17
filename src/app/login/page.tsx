@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useMockAuth } from '@/hooks/use-mock-auth';
-import { Package, Eye, EyeOff } from 'lucide-react';
+import { ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -19,7 +19,6 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     await login(email, password);
     setIsLoading(false);
@@ -30,10 +29,12 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center items-center gap-2 mb-4">
-            <Package className="h-10 w-10 text-primary" />
-            <CardTitle className="text-3xl font-headline">BlockPay</CardTitle>
+            <ShieldCheck className="h-12 w-12 text-primary" />
+            <CardTitle className="text-3xl font-headline">Login to BlockPay</CardTitle>
           </div>
-          <CardDescription>Admin Dashboard Login</CardDescription>
+          <CardDescription>
+            Use demo credentials: admin@blockpay.com / password123
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -83,9 +84,6 @@ export default function LoginPage() {
           </form>
         </CardContent>
         <CardFooter className="flex flex-col items-center text-sm">
-           <p className="text-muted-foreground">
-            Use credentials: <span className="font-medium">admin@blockpay.com</span> / <span className="font-medium">password123</span>
-          </p>
           <p className="mt-2 text-muted-foreground">
             Don&apos;t have an account? <Link href="#" className="text-primary hover:underline">Contact Support</Link>
           </p>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { PageHeader } from '@/components/shared/page-header';
@@ -68,21 +67,11 @@ export default function SettingsPage() {
       
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Notifications</CardTitle>
-          <CardDescription>Manage your notification preferences.</CardDescription>
+          <CardTitle>General Settings</CardTitle>
+          <CardDescription>Other application settings.</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Notification settings will be available here.</p>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle>Account Security</CardTitle>
-          <CardDescription>Manage your account security settings.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">Account security settings like 2FA will be available here.</p>
+          <p className="text-muted-foreground">General application settings and preferences will be managed here.</p>
         </CardContent>
       </Card>
     </div>
