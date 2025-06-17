@@ -32,9 +32,9 @@ export default function SettingsPage() {
               className="grid grid-cols-1 gap-4 sm:grid-cols-3"
             >
               <div>
-                <RadioGroupItem value="light" id="light" className="peer sr-only" />
+                <RadioGroupItem value="light" id="light-theme" className="peer sr-only" />
                 <Label
-                  htmlFor="light"
+                  htmlFor="light-theme"
                   className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                 >
                   <Sun className="mb-3 h-6 w-6" />
@@ -42,9 +42,9 @@ export default function SettingsPage() {
                 </Label>
               </div>
               <div>
-                <RadioGroupItem value="dark" id="dark" className="peer sr-only" />
+                <RadioGroupItem value="dark" id="dark-theme" className="peer sr-only" />
                 <Label
-                  htmlFor="dark"
+                  htmlFor="dark-theme"
                   className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                 >
                   <Moon className="mb-3 h-6 w-6" />
@@ -52,9 +52,9 @@ export default function SettingsPage() {
                 </Label>
               </div>
               <div>
-                <RadioGroupItem value="system" id="system" className="peer sr-only" />
+                <RadioGroupItem value="system" id="system-theme" className="peer sr-only" />
                 <Label
-                  htmlFor="system"
+                  htmlFor="system-theme"
                   className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                 >
                   <Laptop className="mb-3 h-6 w-6" />
