@@ -21,6 +21,7 @@ import {
   DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge'; // Added import for Badge
 import { formatDistanceToNow } from 'date-fns';
 
 function getBreadcrumbItems(pathname: string) {
@@ -218,7 +219,7 @@ export function AppHeader() {
             )}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="flex items-center justify-center gap-2 py-2" onClick={markAllAsRead} disabled={unreadCount === 0}>
-              <CheckCircle className="h-4 w-4" /> Mark all as read
+              <CheckCircle className="mr-2 h-4 w-4" /> Mark all as read
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="flex items-center justify-center gap-2 py-2">
               <Link href="/notifications"> {/* Placeholder link */}
