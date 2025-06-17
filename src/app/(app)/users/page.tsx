@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { PageHeader } from '@/components/shared/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,14 +16,42 @@ import { fetchUsers } from '@/lib/mock-data';
 import type { User } from '@/lib/types';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useToast } from '@/hooks/use-toast';
 
 const ITEMS_PER_PAGE = 10;
 
+const newUserSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Invalid email address." }),
+  walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, { message: "Invalid wallet address. Must be 0x followed by 40 hex characters." }),
+  kycStatus: z.enum(['verified', 'pending', 'rejected', 'not_started']),
+  accountStatus: z.enum(['active', 'suspended']),
+});
+
 export default function UsersPage() {
+  const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
   const [filters, setFilters] = useState<{ kycStatus?: string; accountStatus?: string }>({});
+  const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<z.infer<typeof newUserSchema>>({
+    resolver: zodResolver(newUserSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      walletAddress: '',
+      kycStatus: 'not_started',
+      accountStatus: 'active',
+    },
+  });
 
   const { data, isLoading, error } = useQuery<{ data: User[], total: number, page: number, limit: number }, Error>({
     queryKey: ['users', currentPage, appliedSearchTerm, filters],
@@ -74,6 +102,19 @@ export default function UsersPage() {
     }
   };
 
+  function onSubmitNewUser(values: z.infer<typeof newUserSchema>) {
+    // In a real app, you would send this data to your backend
+    console.log("New user data:", values);
+    toast({
+      title: "User Creation Simulated",
+      description: `User "${values.name}" has been added. (This is a mock action)`,
+    });
+    setIsAddUserDialogOpen(false);
+    form.reset(); // Reset form fields
+    // Optionally, refetch user list:
+    // queryClient.invalidateQueries({ queryKey: ['users'] });
+  }
+
   if (error) {
     return <div className="text-red-500">Error loading users: {error.message}</div>;
   }
@@ -81,10 +122,119 @@ export default function UsersPage() {
   return (
     <div className="space-y-6">
       <PageHeader title="User Management" description="Manage customer accounts, KYC verification, and support.">
-        <Button>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add New User
-        </Button>
+        <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Add New User
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[525px]">
+            <DialogHeader>
+              <DialogTitle>Add New User</DialogTitle>
+              <DialogDescription>
+                Fill in the details below to create a new user account.
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmitNewUser)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email Address</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="user@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="walletAddress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Wallet Address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="0x..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                    control={form.control}
+                    name="kycStatus"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>KYC Status</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select KYC status" />
+                            </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                            <SelectItem value="not_started">Not Started</SelectItem>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="verified">Verified</SelectItem>
+                            <SelectItem value="rejected">Rejected</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name="accountStatus"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Account Status</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select account status" />
+                            </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="suspended">Suspended</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                     <Button type="button" variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button type="submit" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? "Adding User..." : "Add User"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </PageHeader>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -229,3 +379,4 @@ export default function UsersPage() {
     </div>
   );
 }
+
