@@ -3,9 +3,8 @@
 
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppSidebar } from '@/components/layout/sidebar';
 import { AppHeader } from '@/components/layout/header';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppFooter } from '@/components/layout/footer'; // New Footer
 import { useMockAuth } from '@/hooks/use-mock-auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -31,17 +30,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider defaultOpen>
-        <div className="flex min-h-screen w-full">
-          <AppSidebar user={user} />
-          <div className="flex flex-1 flex-col">
-            <AppHeader />
-            <main className="flex-1 overflow-y-auto bg-background p-4 pt-6 md:p-8">
-              {children}
-            </main>
-          </div>
-        </div>
-      </SidebarProvider>
+      <div className="flex min-h-screen w-full flex-col"> {/* Changed to flex-col */}
+        <AppHeader user={user} /> {/* Pass user to header for nav items if needed */}
+        <main className="flex-1 overflow-y-auto bg-background p-4 pt-6 md:p-8">
+          {children}
+        </main>
+        <AppFooter user={user} /> {/* Add new footer */}
+      </div>
     </QueryClientProvider>
   );
 }

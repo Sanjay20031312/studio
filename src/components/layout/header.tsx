@@ -2,12 +2,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Bell, Search, Settings, Users, CreditCard, LifeBuoy, LogOut, MessageSquare, CheckCircle } from 'lucide-react';
+import { Bell, Search, Settings, Users, CreditCard, LifeBuoy, LogOut, MessageSquare, CheckCircle, Menu as MenuIcon, Home, ListCollapse, Zap, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserNav } from './user-nav';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { useMockAuth } from '@/hooks/use-mock-auth';
+import type { User } from '@/lib/types';
 import { usePathname, useRouter } from 'next/navigation';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import Link from 'next/link';
@@ -21,8 +20,9 @@ import {
   DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge'; // Added import for Badge
+import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
+import { AppLogo } from '@/components/icons/AppLogo';
 
 function getBreadcrumbItems(pathname: string) {
   const pathParts = pathname.split('/').filter(part => part);
@@ -90,9 +90,19 @@ const mockNotifications: NotificationItem[] = [
   },
 ];
 
+const navItems = [
+  { href: '/dashboard', label: 'Overview', icon: <Home className="mr-2 h-4 w-4" /> },
+  { href: '/transactions', label: 'Transactions', icon: <ListCollapse className="mr-2 h-4 w-4" /> },
+  { href: '/users', label: 'User Management', icon: <Users className="mr-2 h-4 w-4" /> },
+  { href: '/blockchain', label: 'Blockchain', icon: <Zap className="mr-2 h-4 w-4" /> },
+  { href: '/settings', label: 'Settings', icon: <Settings2 className="mr-2 h-4 w-4" /> },
+];
 
-export function AppHeader() {
-  const { user } = useMockAuth();
+interface AppHeaderProps {
+  user: User | null;
+}
+
+export function AppHeader({ user }: AppHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const breadcrumbItems = getBreadcrumbItems(pathname);
@@ -120,38 +130,63 @@ export function AppHeader() {
   
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-md md:px-8">
-      <div className="md:hidden">
-        <SidebarTrigger />
-      </div>
-      
-      <Breadcrumb className="hidden md:flex">
-        <BreadcrumbList>
-          {breadcrumbItems.map((item, index) => (
-            <React.Fragment key={item.href}>
-              <BreadcrumbItem>
-                {index === breadcrumbItems.length - 1 ? (
-                  <BreadcrumbPage className="font-medium">{item.name}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink asChild>
-                    <Link href={item.href}>{item.name}</Link>
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-              {index < breadcrumbItems.length - 1 && <BreadcrumbSeparator />}
-            </React.Fragment>
-          ))}
-        </BreadcrumbList>
-      </Breadcrumb>
+  const isActive = (href: string) => {
+    if (href === '/dashboard') {
+      return pathname === href;
+    }
+    if (href === '/search') {
+        return pathname === href || pathname.startsWith(`${href}?`);
+    }
+    return pathname.startsWith(href);
+  };
 
-      <div className="ml-auto flex items-center gap-4">
-        <form onSubmit={handleHeaderSearchSubmit} className="relative hidden md:block">
+  return (
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-md md:px-6">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <MenuIcon className="h-6 w-6" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+          <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {navItems.map((item) => (
+            <DropdownMenuItem key={item.href} asChild>
+              <Link href={item.href} className={`flex items-center ${isActive(item.href) ? 'bg-accent text-accent-foreground' : ''}`}>
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      
+      <Link href="/dashboard" className="mr-6 hidden items-center gap-2 md:flex">
+        <AppLogo className="h-8 w-8 text-primary" />
+        <h1 className="text-xl font-headline font-semibold">BlockPay Admin</h1>
+      </Link>
+      
+      <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+        {navItems.map((item) => (
+           <Link
+            key={item.href}
+            href={item.href}
+            className={`transition-colors hover:text-foreground ${isActive(item.href) ? 'text-foreground font-semibold border-b-2 border-primary' : 'text-muted-foreground'}`}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      <div className="ml-auto flex items-center gap-2 md:gap-4">
+        <form onSubmit={handleHeaderSearchSubmit} className="relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Global search..."
-            className="w-full rounded-lg bg-card pl-8 md:w-[200px] lg:w-[320px]"
+            className="w-full rounded-lg bg-card pl-8 md:w-[200px] lg:w-[300px]"
             aria-label="Global search"
             value={headerSearchTerm}
             onChange={(e) => setHeaderSearchTerm(e.target.value)}
