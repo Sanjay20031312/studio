@@ -10,11 +10,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Search, ListFilter, FileText, Undo2, Briefcase } from 'lucide-react';
+import { Download, Search, ListFilter, FileText, Undo2, Briefcase, MoreVertical } from 'lucide-react'; // Changed ListFilter to MoreVertical for action menu icon
 import { fetchTransactions } from '@/lib/mock-data';
 import type { Transaction } from '@/lib/types';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -23,6 +24,7 @@ export default function TransactionsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<{ status?: string; type?: string }>({});
+  const { toast } = useToast();
 
   const { data, isLoading, error } = useQuery<{ data: Transaction[], total: number, page: number, limit: number }, Error>({
     queryKey: ['transactions', currentPage, searchTerm, filters],
@@ -54,6 +56,67 @@ export default function TransactionsPage() {
     }
   };
 
+  const handleExportCSV = () => {
+    if (!transactions.length) {
+      toast({
+        title: "No Data",
+        description: "There are no transactions to export.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const headers = ['ID', 'User Name', 'Amount', 'Currency', 'Status', 'Type', 'Timestamp', 'Merchant', 'Blockchain Tx Hash'];
+    const csvRows = [
+      headers.join(','),
+      ...transactions.map(tx => [
+        tx.id,
+        `"${tx.userName.replace(/"/g, '""')}"`, // Escape double quotes
+        tx.amount,
+        tx.currency,
+        tx.status,
+        tx.type,
+        format(new Date(tx.timestamp), 'yyyy-MM-dd HH:mm:ss'),
+        `"${(tx.merchant || 'N/A').replace(/"/g, '""')}"`,
+        tx.blockchainTxHash || 'N/A'
+      ].join(','))
+    ];
+    const csvString = csvRows.join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `transactions-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast({
+        title: "Export Successful",
+        description: "Transactions CSV has been downloaded.",
+      });
+    } else {
+       toast({
+        title: "Export Failed",
+        description: "Your browser does not support automatic CSV download.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleBatchProcess = () => {
+    // In a real app, this would likely operate on selected transactions.
+    // For now, it's a placeholder.
+    toast({
+      title: "Batch Process Initiated",
+      description: "This is a placeholder for batch processing transactions. In a real app, you would select transactions to process.",
+    });
+    // Add actual batch processing logic here, e.g., API call
+  };
+
+
   if (error) {
     return <div className="text-red-500">Error loading transactions: {error.message}</div>;
   }
@@ -61,11 +124,11 @@ export default function TransactionsPage() {
   return (
     <div className="space-y-6">
       <PageHeader title="Transaction Management" description="Search, filter, and manage all transactions.">
-        <Button variant="outline">
+        <Button variant="outline" onClick={handleExportCSV}>
           <Download className="mr-2 h-4 w-4" />
           Export CSV
         </Button>
-         <Button>
+         <Button onClick={handleBatchProcess}>
           <Briefcase className="mr-2 h-4 w-4" />
           Batch Process
         </Button>
@@ -164,7 +227,7 @@ export default function TransactionsPage() {
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                            <span className="sr-only">Open menu</span>
-                           <ListFilter className="h-4 w-4" />
+                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
@@ -214,4 +277,3 @@ export default function TransactionsPage() {
     </div>
   );
 }
-
