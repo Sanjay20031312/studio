@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -11,10 +12,10 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
-import { AppLogo } from '@/components/icons/AppLogo'; // Updated import
+import { AppLogo } from '@/components/icons/AppLogo'; 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Home, ListCollapse, Users, Zap, Settings2, LogOut } from 'lucide-react'; // Removed Package, CreditCard
+import { Home, ListCollapse, Users, Zap, Settings2, LogOut, Search } from 'lucide-react'; 
 import type { User } from '@/lib/types';
 import { useMockAuth } from '@/hooks/use-mock-auth';
 
@@ -27,12 +28,25 @@ const navItems = [
   { href: '/transactions', label: 'Transactions', icon: <ListCollapse /> },
   { href: '/users', label: 'User Management', icon: <Users /> },
   { href: '/blockchain', label: 'Blockchain', icon: <Zap /> },
+  // Optional: Add a direct link to search page if desired in sidebar
+  // { href: '/search', label: 'Global Search', icon: <Search /> }, 
   { href: '/settings', label: 'Settings', icon: <Settings2 /> },
 ];
 
 export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
   const { logout } = useMockAuth();
+
+  const isActive = (href: string) => {
+    if (href === '/dashboard') {
+      return pathname === href;
+    }
+    // For search page, ensure it's an exact match or starts with /search? if params exist
+    if (href === '/search') {
+        return pathname === href || pathname.startsWith(`${href}?`);
+    }
+    return pathname.startsWith(href);
+  };
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" side="left" className="border-r">
@@ -48,7 +62,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))}
+                isActive={isActive(item.href)}
                 tooltip={{ children: item.label, side: 'right', className: "ml-2" }}
               >
                 <Link href={item.href}>

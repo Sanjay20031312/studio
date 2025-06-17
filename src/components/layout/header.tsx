@@ -18,6 +18,11 @@ function getBreadcrumbItems(pathname: string) {
   
   pathParts.forEach((part, index) => {
     if (part === 'dashboard' && index === 0) return; 
+    // Special handling for search page breadcrumb
+    if (part === 'search' && index === 0) {
+       breadcrumbs.push({ name: 'Search', href: '/search'});
+       return;
+    }
     const href = '/' + pathParts.slice(0, index + 1).join('/');
     breadcrumbs.push({ name: part.charAt(0).toUpperCase() + part.slice(1), href });
   });
@@ -35,7 +40,7 @@ export function AppHeader() {
   const handleHeaderSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (headerSearchTerm.trim()) {
-      router.push(`/transactions?search=${encodeURIComponent(headerSearchTerm.trim())}`);
+      router.push(`/search?q=${encodeURIComponent(headerSearchTerm.trim())}`);
     }
   };
 
@@ -69,9 +74,9 @@ export function AppHeader() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search transactions..."
+            placeholder="Global search..."
             className="w-full rounded-lg bg-card pl-8 md:w-[200px] lg:w-[320px]"
-            aria-label="Search transactions"
+            aria-label="Global search"
             value={headerSearchTerm}
             onChange={(e) => setHeaderSearchTerm(e.target.value)}
           />
