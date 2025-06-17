@@ -1,8 +1,9 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'next/navigation';
 import { PageHeader } from '@/components/shared/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,9 +22,13 @@ const ITEMS_PER_PAGE = 10;
 
 export default function TransactionsPage() {
   const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
+  
+  const initialSearchFromURL = searchParams.get('search') || '';
+  
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchInput, setSearchInput] = useState('');
-  const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState(initialSearchFromURL);
+  const [appliedSearchTerm, setAppliedSearchTerm] = useState(initialSearchFromURL);
   const [filters, setFilters] = useState<{ status?: string; type?: string }>({});
   const { toast } = useToast();
 
@@ -32,6 +37,16 @@ export default function TransactionsPage() {
     queryFn: () => fetchTransactions({ page: currentPage, limit: ITEMS_PER_PAGE, filters: { ...filters, search: appliedSearchTerm } }),
     keepPreviousData: true,
   });
+  
+  useEffect(() => {
+    const newSearchFromURL = searchParams.get('search') || '';
+    if (newSearchFromURL !== appliedSearchTerm) {
+      setSearchInput(newSearchFromURL);
+      setAppliedSearchTerm(newSearchFromURL);
+      setCurrentPage(1); 
+    }
+  }, [searchParams, appliedSearchTerm]);
+
 
   const totalPages = data ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
 
