@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Search, ListFilter, FileText, Undo2, Briefcase, MoreVertical } from 'lucide-react'; // Changed ListFilter to MoreVertical for action menu icon
+import { Download, Search, ListFilter, FileText, Undo2, Briefcase, MoreVertical } from 'lucide-react';
 import { fetchTransactions } from '@/lib/mock-data';
 import type { Transaction } from '@/lib/types';
 import { format } from 'date-fns';
@@ -22,13 +22,14 @@ const ITEMS_PER_PAGE = 10;
 export default function TransactionsPage() {
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
   const [filters, setFilters] = useState<{ status?: string; type?: string }>({});
   const { toast } = useToast();
 
   const { data, isLoading, error } = useQuery<{ data: Transaction[], total: number, page: number, limit: number }, Error>({
-    queryKey: ['transactions', currentPage, searchTerm, filters],
-    queryFn: () => fetchTransactions({ page: currentPage, limit: ITEMS_PER_PAGE, filters: { ...filters, search: searchTerm } }),
+    queryKey: ['transactions', currentPage, appliedSearchTerm, filters],
+    queryFn: () => fetchTransactions({ page: currentPage, limit: ITEMS_PER_PAGE, filters: { ...filters, search: appliedSearchTerm } }),
     keepPreviousData: true,
   });
 
@@ -39,19 +40,30 @@ export default function TransactionsPage() {
     setCurrentPage(1);
   };
   
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    setAppliedSearchTerm(searchInput);
     setCurrentPage(1);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSearchSubmit();
+    }
   };
 
   const transactions = data?.data || [];
   
   const getStatusBadgeVariant = (status: Transaction['status']) => {
     switch (status) {
-      case 'completed': return 'default'; // bg-primary
-      case 'pending': return 'secondary'; // bg-secondary
+      case 'completed': return 'default';
+      case 'pending': return 'secondary';
       case 'failed': return 'destructive';
-      case 'refunded': return 'outline'; // text-foreground
+      case 'refunded': return 'outline';
       default: return 'outline';
     }
   };
@@ -71,7 +83,7 @@ export default function TransactionsPage() {
       headers.join(','),
       ...transactions.map(tx => [
         tx.id,
-        `"${tx.userName.replace(/"/g, '""')}"`, // Escape double quotes
+        `"${tx.userName.replace(/"/g, '""')}"`,
         tx.amount,
         tx.currency,
         tx.status,
@@ -107,13 +119,10 @@ export default function TransactionsPage() {
   };
 
   const handleBatchProcess = () => {
-    // In a real app, this would likely operate on selected transactions.
-    // For now, it's a placeholder.
     toast({
       title: "Batch Process Initiated",
       description: "This is a placeholder for batch processing transactions. In a real app, you would select transactions to process.",
     });
-    // Add actual batch processing logic here, e.g., API call
   };
 
 
@@ -135,16 +144,20 @@ export default function TransactionsPage() {
       </PageHeader>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            type="search" 
-            placeholder="Search transactions by ID, user, merchant..." 
-            className="w-full rounded-lg bg-card pl-8" 
-            value={searchTerm}
-            onChange={handleSearchChange}
-            aria-label="Search transactions"
-          />
+        <div className="flex flex-1 gap-2">
+          <div className="relative flex-grow">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input 
+              type="search" 
+              placeholder="Search transactions by ID, user, merchant..." 
+              className="w-full rounded-lg bg-card pl-8" 
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              onKeyDown={handleKeyDown}
+              aria-label="Search transactions"
+            />
+          </div>
+          <Button onClick={handleSearchSubmit}>Search</Button>
         </div>
         <div className="flex gap-2">
           <Select value={filters.status || 'all'} onValueChange={(value) => handleFilterChange('status', value)}>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -20,12 +21,13 @@ const ITEMS_PER_PAGE = 10;
 
 export default function UsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
   const [filters, setFilters] = useState<{ kycStatus?: string; accountStatus?: string }>({});
 
   const { data, isLoading, error } = useQuery<{ data: User[], total: number, page: number, limit: number }, Error>({
-    queryKey: ['users', currentPage, searchTerm, filters],
-    queryFn: () => fetchUsers({ page: currentPage, limit: ITEMS_PER_PAGE, filters: { ...filters, search: searchTerm } }),
+    queryKey: ['users', currentPage, appliedSearchTerm, filters],
+    queryFn: () => fetchUsers({ page: currentPage, limit: ITEMS_PER_PAGE, filters: { ...filters, search: appliedSearchTerm } }),
     keepPreviousData: true,
   });
 
@@ -36,9 +38,20 @@ export default function UsersPage() {
     setCurrentPage(1);
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    setAppliedSearchTerm(searchInput);
     setCurrentPage(1);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSearchSubmit();
+    }
   };
 
   const users = data?.data || [];
@@ -75,16 +88,20 @@ export default function UsersPage() {
       </PageHeader>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            type="search" 
-            placeholder="Search users by name, email, wallet..." 
-            className="w-full rounded-lg bg-card pl-8"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            aria-label="Search users"
-          />
+        <div className="flex flex-1 gap-2">
+          <div className="relative flex-grow">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input 
+              type="search" 
+              placeholder="Search users by name, email, wallet..." 
+              className="w-full rounded-lg bg-card pl-8"
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              onKeyDown={handleKeyDown}
+              aria-label="Search users"
+            />
+          </div>
+          <Button onClick={handleSearchSubmit}>Search</Button>
         </div>
         <div className="flex gap-2">
           <Select value={filters.kycStatus || 'all'} onValueChange={(value) => handleFilterChange('kycStatus', value)}>
