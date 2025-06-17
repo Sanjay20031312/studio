@@ -1,13 +1,11 @@
-// This file previously caused a route conflict for the /settings path.
-// It has been intentionally modified to ensure it does not export
-// anything that Next.js could interpret as a page component.
-// This is to resolve the "two parallel pages" error with
-// src/app/(app)/settings/page.tsx.
+// This file is intentionally left non-functional to avoid a Next.js routing conflict
+// with src/app/(app)/settings/page.tsx.
 //
-// The active and correct settings page is located at:
-// src/app/(app)/settings/page.tsx
+// THE PREFERRED SOLUTION IS TO DELETE THIS FILE (`src/app/settings/page.tsx`) MANUALLY.
 //
-// If this modification does not resolve the error, this file
-// (src/app/settings/page.tsx) can be safely deleted.
+// If this file is present, Next.js may try to treat it as a page,
+// causing the "You cannot have two parallel pages that resolve to the same path" error.
 
-const placeholder_to_prevent_empty_file_issues_and_ensure_no_exports = true;
+export const THIS_FILE_SHOULD_BE_DELETED_TO_FIX_ROUTING_ERROR = true;
+
+// Do not add a default export or any React component here.
