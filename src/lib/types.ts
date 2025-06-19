@@ -1,3 +1,4 @@
+import type React from 'react';
 
 export interface Transaction {
   id: string;
@@ -7,7 +8,7 @@ export interface Transaction {
   currency: string;
   status: 'pending' | 'completed' | 'failed' | 'refunded';
   type: 'payment' | 'withdrawal' | 'deposit' | 'refund';
-  timestamp: string;
+  timestamp: string; // ISO string
   merchant?: string;
   blockchainTxHash?: string;
 }
@@ -22,15 +23,15 @@ export interface User {
   loyaltyPoints: number;
   cryptoBalance: number;
   accountStatus: 'active' | 'suspended';
-  lastLogin: string;
-  joinDate: string;
+  lastLogin: string; // ISO string
+  joinDate: string; // ISO string
 }
 
 export interface BlockchainNetworkStatus {
   name: string;
   status: 'online' | 'offline' | 'degraded';
   blockHeight: number;
-  lastBlockTime: string;
+  lastBlockTime: string; // ISO string
   avgGasPrice: string;
 }
 
@@ -39,18 +40,18 @@ export interface SmartContractLog {
   contractAddress: string;
   functionCalled: string;
   params: Record<string, any>;
-  timestamp: string;
+  timestamp: string; // ISO string
   status: 'success' | 'failure';
   gasUsed: string;
 }
 
 export interface DailyRevenue {
-  date: string;
+  date: string; // Formatted string e.g., "MMM dd"
   revenue: number;
 }
 
 export interface UserGrowth {
-  date: string;
+  date: string; // Formatted string e.g., "MMM dd"
   newUsers: number;
 }
 
@@ -61,11 +62,11 @@ export interface SystemMetric {
   status?: 'healthy' | 'warning' | 'critical';
 }
 
-// For Zustand store
 export interface UiState {
   theme: 'light' | 'dark' | 'system';
-  setTheme: (theme: 'light' | 'dark' | 'system') => void;
-  sidebarOpen: boolean;
+  setTheme: (theme: UiState['theme']) => void;
+  // sidebarOpen is part of the original type, keeping it for type consistency even if not visually used
+  sidebarOpen: boolean; 
   toggleSidebar: () => void;
 }
 
@@ -75,12 +76,11 @@ export type NavItem = {
   icon: React.ReactNode;
   disabled?: boolean;
   external?: boolean;
-  label?: string;
+  label?: string; // For badges or additional info
   description?: string;
 };
 
 export type NavItemGroup = {
-  title?: string;
+  title?: string; // Optional title for a group of items
   items: NavItem[];
 };
-

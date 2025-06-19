@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -11,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MoreHorizontal, Search, UserPlus, CheckCircle, AlertCircle, XCircle, Clock, UserCog, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { MoreHorizontal, Search, UserPlus, CheckCircle, AlertCircle, Clock, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { fetchUsers } from '@/lib/mock-data';
 import type { User } from '@/lib/types';
 import { format } from 'date-fns';
@@ -110,7 +109,7 @@ export default function UsersPage() {
       description: `User "${values.name}" has been added. (This is a mock action)`,
     });
     setIsAddUserDialogOpen(false);
-    form.reset(); // Reset form fields
+    form.reset(); 
     // Optionally, refetch user list:
     // queryClient.invalidateQueries({ queryKey: ['users'] });
   }
@@ -379,4 +378,3 @@ export default function UsersPage() {
     </div>
   );
 }
-

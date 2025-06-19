@@ -1,14 +1,12 @@
-
 'use client';
 
 import React, { useState } from 'react';
-import { Bell, Search, Settings, Users, CreditCard, LifeBuoy, LogOut, MessageSquare, CheckCircle, Menu as MenuIcon, Home, ListCollapse, Zap, Settings2 } from 'lucide-react';
+import { Bell, Search, Settings, Users, CreditCard, LogOut, MessageSquare, CheckCircle, Menu as MenuIcon, Home, ListCollapse, Zap, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserNav } from './user-nav';
 import type { User } from '@/lib/types';
 import { usePathname, useRouter } from 'next/navigation';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import Link from 'next/link';
 import {
   DropdownMenu,
@@ -23,22 +21,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
 import { AppLogo } from '@/components/icons/AppLogo';
-
-function getBreadcrumbItems(pathname: string) {
-  const pathParts = pathname.split('/').filter(part => part);
-  const breadcrumbs = [{ name: 'Dashboard', href: '/dashboard' }];
-  
-  pathParts.forEach((part, index) => {
-    if (part === 'dashboard' && index === 0) return; 
-    if (part === 'search' && index === 0) {
-       breadcrumbs.push({ name: 'Search', href: '/search'});
-       return;
-    }
-    const href = '/' + pathParts.slice(0, index + 1).join('/');
-    breadcrumbs.push({ name: part.charAt(0).toUpperCase() + part.slice(1), href });
-  });
-  return breadcrumbs;
-}
 
 interface NotificationItem {
   id: string;
@@ -57,7 +39,7 @@ const mockNotifications: NotificationItem[] = [
     icon: MessageSquare,
     title: 'New transaction processed',
     description: 'Transaction #TRX12345 for $250.00 has been completed.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 5), 
     read: false,
     avatar: 'https://placehold.co/32x32.png?text=S',
     avatarFallback: 'S',
@@ -67,7 +49,7 @@ const mockNotifications: NotificationItem[] = [
     icon: Users,
     title: 'New user registered',
     description: 'John Doe (john.doe@example.com) just signed up.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), 
     read: false,
     avatar: 'https://placehold.co/32x32.png?text=U',
     avatarFallback: 'U',
@@ -77,7 +59,7 @@ const mockNotifications: NotificationItem[] = [
     icon: Settings,
     title: 'System update complete',
     description: 'The system has been updated to version 2.1.0.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), 
     read: true,
   },
   {
@@ -85,7 +67,7 @@ const mockNotifications: NotificationItem[] = [
     icon: CreditCard,
     title: 'Large withdrawal alert',
     description: 'Withdrawal of $5,000.00 initiated by user Alice.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 30),
     read: false,
   },
 ];
@@ -105,7 +87,6 @@ interface AppHeaderProps {
 export function AppHeader({ user }: AppHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const breadcrumbItems = getBreadcrumbItems(pathname);
   const [headerSearchTerm, setHeaderSearchTerm] = useState('');
   const [notifications, setNotifications] = useState<NotificationItem[]>(mockNotifications);
 
@@ -131,17 +112,13 @@ export function AppHeader({ user }: AppHeaderProps) {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const isActive = (href: string) => {
-    if (href === '/dashboard') {
-      return pathname === href;
-    }
-    if (href === '/search') {
-        return pathname === href || pathname.startsWith(`${href}?`);
-    }
-    return pathname.startsWith(href);
+    if (href === '/dashboard') return pathname === href;
+    if (href === '/search') return pathname === href || pathname.startsWith(`${href}?`);
+    return pathname.startsWith(href) && href !== '/dashboard'; // Avoid /dashboard matching /dashboard/anything
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-md md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-md md:px-6">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="md:hidden">
@@ -173,7 +150,7 @@ export function AppHeader({ user }: AppHeaderProps) {
            <Link
             key={item.href}
             href={item.href}
-            className={`transition-colors hover:text-foreground ${isActive(item.href) ? 'text-foreground font-semibold border-b-2 border-primary' : 'text-muted-foreground'}`}
+            className={`transition-colors hover:text-foreground ${isActive(item.href) ? 'text-foreground font-semibold border-b-2 border-primary pb-px' : 'text-muted-foreground'}`}
           >
             {item.label}
           </Link>
@@ -182,11 +159,11 @@ export function AppHeader({ user }: AppHeaderProps) {
 
       <div className="ml-auto flex items-center gap-2 md:gap-4">
         <form onSubmit={handleHeaderSearchSubmit} className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Global search..."
-            className="w-full rounded-lg bg-card pl-8 md:w-[200px] lg:w-[300px]"
+            className="w-full rounded-lg bg-card pl-8 md:w-[200px] lg:w-[300px] h-9"
             aria-label="Global search"
             value={headerSearchTerm}
             onChange={(e) => setHeaderSearchTerm(e.target.value)}
@@ -223,7 +200,7 @@ export function AppHeader({ user }: AppHeaderProps) {
                 {notifications.map((notification) => (
                   <DropdownMenuItem
                     key={notification.id}
-                    className={`flex items-start gap-3 p-3 ${!notification.read ? 'bg-accent/50' : ''}`}
+                    className={`flex items-start gap-3 p-3 cursor-pointer ${!notification.read ? 'bg-accent/10 dark:bg-accent/20' : ''}`}
                     onClick={() => markAsRead(notification.id)}
                   >
                     {notification.avatar ? (
@@ -238,15 +215,15 @@ export function AppHeader({ user }: AppHeaderProps) {
                       <p className={`text-sm font-medium ${!notification.read ? 'text-foreground' : 'text-muted-foreground'}`}>
                         {notification.title}
                       </p>
-                      <p className={`text-xs ${!notification.read ? 'text-muted-foreground' : 'text-muted-foreground/70'}`}>
+                      <p className={`text-xs ${!notification.read ? 'text-muted-foreground/80' : 'text-muted-foreground/70'}`}>
                         {notification.description}
                       </p>
-                      <p className="text-xs text-muted-foreground/50 mt-0.5">
+                      <p className="text-xs text-muted-foreground/60 mt-0.5">
                         {formatDistanceToNow(notification.timestamp, { addSuffix: true })}
                       </p>
                     </div>
                     {!notification.read && (
-                      <div className="h-2 w-2 rounded-full bg-primary self-center ml-2"></div>
+                      <div className="h-2 w-2 rounded-full bg-primary self-center ml-2 shrink-0"></div>
                     )}
                   </DropdownMenuItem>
                 ))}
@@ -256,8 +233,8 @@ export function AppHeader({ user }: AppHeaderProps) {
             <DropdownMenuItem className="flex items-center justify-center gap-2 py-2" onClick={markAllAsRead} disabled={unreadCount === 0}>
               <CheckCircle className="mr-2 h-4 w-4" /> Mark all as read
             </DropdownMenuItem>
-            <DropdownMenuItem asChild className="flex items-center justify-center gap-2 py-2">
-              <Link href="/notifications"> {/* Placeholder link */}
+            <DropdownMenuItem asChild className="flex items-center justify-center gap-2 py-2 cursor-pointer">
+              <Link href="/notifications"> 
                 View all notifications
               </Link>
             </DropdownMenuItem>

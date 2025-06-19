@@ -1,4 +1,3 @@
-
 'use client';
 
 // This component is no longer used as sidebar functionality has been moved

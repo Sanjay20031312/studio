@@ -6,13 +6,13 @@ interface StatCardProps {
   value: string | number;
   icon: LucideIcon;
   description?: string;
-  trend?: string; // e.g., "+5.2% from last month"
+  trend?: string; 
   trendColor?: 'text-green-500' | 'text-red-500';
 }
 
 export function StatCard({ title, value, icon: Icon, description, trend, trendColor }: StatCardProps) {
   return (
-    <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}

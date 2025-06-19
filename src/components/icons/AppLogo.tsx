@@ -1,4 +1,3 @@
-// src/components/icons/AppLogo.tsx
 import { LayoutDashboard } from 'lucide-react';
 import type React from 'react';
 
@@ -12,6 +11,7 @@ export function AppLogo({ size = 24, className, ...props }: AppLogoProps) {
       className={className}
       size={size}
       aria-label="BlockPay Logo"
+      strokeWidth={2.5}
       {...props}
     />
   );

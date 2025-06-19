@@ -22,8 +22,8 @@ const TransactionSummaryInputSchema = z.object({
 export type TransactionSummaryInput = z.infer<typeof TransactionSummaryInputSchema>;
 
 const TransactionSummaryOutputSchema = z.object({
-  summary: z.string().describe('A summary of the transaction.'),
-  receipt: z.string().describe('A receipt for the transaction.'),
+  summary: z.string().describe('A concise, friendly summary of the transaction status and key details.'),
+  receipt: z.string().describe('A detailed receipt for the transaction, formatted for display.'),
 });
 export type TransactionSummaryOutput = z.infer<typeof TransactionSummaryOutputSchema>;
 
@@ -36,28 +36,34 @@ const transactionSummaryPrompt = ai.definePrompt({
   input: {schema: TransactionSummaryInputSchema},
   output: {schema: TransactionSummaryOutputSchema},
   prompt: `You are generating a transaction summary and receipt for a user.
+Be friendly and clear.
 
-Transaction ID: {{{transactionId}}}
+Transaction Details:
+ID: {{{transactionId}}}
 Amount: {{{amount}}} {{{currency}}}
 Status: {{{status}}}
 Timestamp: {{{timestamp}}}
 Payment Method: {{{paymentMethod}}}
 Merchant: {{{merchant}}}
 
-Summary:
-{{#if (eq status \"success\")}}
-  Your transaction of {{{amount}}} {{{currency}}} at {{{merchant}}} on {{{timestamp}}} using {{{paymentMethod}}} was successful.
-{{else}}
-  Your transaction of {{{amount}}} {{{currency}}} at {{{merchant}}} on {{{timestamp}}} using {{{paymentMethod}}} failed.
-{{/if}}
+Based on these details, provide a "summary" and a "receipt".
 
-Receipt:
+For the summary:
+If status is "success": "Your transaction of {{{amount}}} {{{currency}}} at {{{merchant}}} on {{{timestamp}}} using {{{paymentMethod}}} was successful. Thank you!"
+If status is "failure": "Unfortunately, your transaction of {{{amount}}} {{{currency}}} at {{{merchant}}} on {{{timestamp}}} using {{{paymentMethod}}} failed. Please try again or contact support."
+
+For the receipt, format it clearly like this:
+BlockPay Transaction Receipt
+--------------------------------
 Transaction ID: {{{transactionId}}}
+Date: {{{timestamp}}}
+Merchant: {{{merchant}}}
 Amount: {{{amount}}} {{{currency}}}
-Status: {{{status}}}
-Timestamp: {{{timestamp}}}
 Payment Method: {{{paymentMethod}}}
-Merchant: {{{merchant}}}`,
+Status: {{{status}}}
+--------------------------------
+Thank you for using BlockPay.
+`,
 });
 
 const transactionSummaryFlow = ai.defineFlow(

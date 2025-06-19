@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,24 +16,25 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Simulate network delay for a more realistic feel
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
     await login(email, password);
-    setIsLoading(false);
+    // setIsLoading(false); // Navigation will occur, so this might not be strictly necessary
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-background p-4">
-      <Card className="w-full max-w-md shadow-2xl">
+      <Card className="w-full max-w-md shadow-2xl rounded-lg">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center items-center gap-2 mb-4">
             <ShieldCheck className="h-12 w-12 text-primary" />
             <CardTitle className="text-3xl font-headline">Login to BlockPay</CardTitle>
           </div>
           <CardDescription>
-            Use demo credentials: admin@blockpay.com / password123
+            Admin access. Use demo credentials: admin@blockpay.com / password123
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -48,6 +49,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required 
                 aria-label="Email"
+                className="text-base md:text-sm"
               />
             </div>
             <div className="space-y-2">
@@ -65,6 +67,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required 
                   aria-label="Password"
+                  className="text-base md:text-sm"
                 />
                 <Button
                   type="button"
@@ -79,7 +82,12 @@ export default function LoginPage() {
               </div>
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Log In'}
+              {isLoading ? (
+                 <div className="flex items-center justify-center">
+                    <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-solid border-primary-foreground border-t-transparent"></div>
+                    Logging in...
+                 </div>
+              ) : 'Log In'}
             </Button>
           </form>
         </CardContent>

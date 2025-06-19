@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -12,9 +11,9 @@ import { fetchTransactions } from '@/lib/mock-data';
 import type { Transaction } from '@/lib/types';
 import { format } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, Search } from 'lucide-react';
+import { AlertTriangle, Search as SearchIcon } from 'lucide-react'; // Renamed Search to SearchIcon to avoid conflict
 
-const ITEMS_PER_PAGE = 10; // Or a larger number for search results
+const ITEMS_PER_PAGE = 10;
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -28,10 +27,10 @@ export default function SearchPage() {
     queryKey: ['searchResults', 'transactions', query],
     queryFn: () => fetchTransactions({ 
       filters: { search: query }, 
-      page: 1, // For simplicity, load first page of results
+      page: 1, 
       limit: ITEMS_PER_PAGE 
     }),
-    enabled: !!query, // Only run query if 'query' is not empty
+    enabled: !!query, 
   });
 
   const transactions = transactionsData?.data || [];
@@ -57,7 +56,7 @@ export default function SearchPage() {
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Search className="mr-2 h-5 w-5" />
+              <SearchIcon className="mr-2 h-5 w-5" />
               Begin Your Search
             </CardTitle>
           </CardHeader>
@@ -129,11 +128,9 @@ export default function SearchPage() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">User search results will be displayed here in the future.</p>
-              {/* Placeholder for user search results - can be implemented similarly to transactions */}
             </CardContent>
           </Card>
           
-          {/* Placeholder for other data types like Blockchain data */}
            <Card className="shadow-lg">
             <CardHeader>
               <CardTitle>Blockchain Data</CardTitle>
@@ -147,4 +144,3 @@ export default function SearchPage() {
     </div>
   );
 }
-

@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 195 20% 96%;
+    --background: 200 27% 96%; /* hsl(200, 27%, 96%) from #E1E8EA */
     --foreground: 220 17% 15%;
 
     --card: 0 0% 100%;
@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 17% 15%;
 
-    --primary: 193 38% 44%;
+    --primary: 193 38% 44%; /* hsl(193, 38%, 44%) from #468B97 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 195 30% 90%;
@@ -22,7 +22,7 @@
     --muted: 195 20% 88%;
     --muted-foreground: 195 15% 45%;
 
-    --accent: 270 23% 61%;
+    --accent: 266 26% 61%; /* hsl(266, 26%, 61%) from #9D7FB7 */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 55%;
@@ -34,7 +34,14 @@
 
     --radius: 0.5rem;
 
-    /* Custom sidebar colors for light theme */
+    /* Chart colors */
+    --chart-1: 193 38% 44%; /* primary */
+    --chart-2: 266 26% 61%; /* accent */
+    --chart-3: 195 18% 65%;
+    --chart-4: 210 30% 50%;
+    --chart-5: 30 80% 60%;
+
+    /* Sidebar specific colors (retained for potential future use or if tailwind config references them) */
     --sidebar-background: 195 20% 90%;
     --sidebar-foreground: 220 17% 15%;
     --sidebar-primary: 193 38% 44%;
@@ -43,25 +50,19 @@
     --sidebar-accent-foreground: 193 38% 30%;
     --sidebar-border: 195 20% 80%;
     --sidebar-ring: 193 38% 50%;
-
-    --chart-1: 193 38% 44%; /* primary */
-    --chart-2: 270 23% 61%; /* accent */
-    --chart-3: 195 18% 65%;
-    --chart-4: 210 30% 50%;
-    --chart-5: 30 80% 60%;
   }
 
   .dark {
     --background: 220 17% 10%;
-    --foreground: 195 20% 96%;
+    --foreground: 200 27% 90%; /* Lighter foreground for dark theme based on light background */
 
     --card: 220 17% 15%;
-    --card-foreground: 195 20% 96%;
+    --card-foreground: 200 27% 90%;
 
     --popover: 220 17% 15%;
-    --popover-foreground: 195 20% 96%;
+    --popover-foreground: 200 27% 90%;
 
-    --primary: 193 38% 50%;
+    --primary: 193 38% 55%; /* Slightly lighter/brighter primary for dark theme */
     --primary-foreground: 220 17% 10%;
 
     --secondary: 220 17% 20%;
@@ -70,7 +71,7 @@
     --muted: 220 17% 20%;
     --muted-foreground: 195 15% 55%;
 
-    --accent: 270 23% 65%;
+    --accent: 266 26% 70%; /* Slightly lighter/brighter accent for dark theme */
     --accent-foreground: 220 17% 10%;
 
     --destructive: 0 60% 50%;
@@ -78,23 +79,24 @@
 
     --border: 220 17% 25%;
     --input: 220 17% 17%;
-    --ring: 193 38% 55%;
+    --ring: 193 38% 60%;
     
-    /* Custom sidebar colors for dark theme */
+    /* Chart colors for dark theme */
+    --chart-1: 193 38% 55%; /* primary */
+    --chart-2: 266 26% 70%; /* accent */
+    --chart-3: 195 18% 55%; 
+    --chart-4: 210 30% 60%;
+    --chart-5: 30 80% 70%;
+
+    /* Sidebar specific colors for dark theme */
     --sidebar-background: 220 17% 13%; 
-    --sidebar-foreground: 195 20% 96%;
-    --sidebar-primary: 193 38% 50%; 
+    --sidebar-foreground: 200 27% 90%;
+    --sidebar-primary: 193 38% 55%; 
     --sidebar-primary-foreground: 220 17% 10%;
     --sidebar-accent: 220 17% 25%;
     --sidebar-accent-foreground: 195 20% 80%;
     --sidebar-border: 220 17% 25%;
-    --sidebar-ring: 193 38% 55%;
-
-    --chart-1: 193 38% 50%; /* primary */
-    --chart-2: 270 23% 65%; /* accent */
-    --chart-3: 195 18% 55%; 
-    --chart-4: 210 30% 60%;
-    --chart-5: 30 80% 70%;
+    --sidebar-ring: 193 38% 60%;
   }
 }
 

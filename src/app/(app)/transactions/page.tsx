@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { PageHeader } from '@/components/shared/page-header';
@@ -98,7 +97,7 @@ export default function TransactionsPage() {
       headers.join(','),
       ...transactions.map(tx => [
         tx.id,
-        `"${tx.userName.replace(/"/g, '""')}"`,
+        `"${tx.userName.replace(/"/g, '""')}"`, // escape double quotes
         tx.amount,
         tx.currency,
         tx.status,

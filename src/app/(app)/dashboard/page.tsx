@@ -6,7 +6,7 @@ import { StatCard } from '@/components/shared/stat-card';
 import { SampleLineChart } from '@/components/charts/sample-line-chart';
 import { SampleBarChart } from '@/components/charts/sample-bar-chart';
 import { fetchDashboardData, mockSystemMetrics } from '@/lib/mock-data';
-import { DollarSign, Users, Activity, BarChart, AlertTriangle, CheckCircle, Settings } from 'lucide-react';
+import { DollarSign, Users, Activity, BarChart, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -36,7 +36,7 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div>
-        <PageHeader title="Overview" description="Real-time metrics and system health." />
+        <PageHeader title="Admin Overview" description="Real-time transaction metrics, system health, and analytics." />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-[126px]" />)}
         </div>
@@ -98,39 +98,39 @@ export default function DashboardPage() {
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle>System Health Monitoring</CardTitle>
-          <CardContent className="pt-4 px-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Metric</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {(data?.systemMetrics || mockSystemMetrics).map((metric) => (
-                  <TableRow key={metric.name}>
-                    <TableCell className="font-medium">{metric.name}</TableCell>
-                    <TableCell>{metric.value} {metric.unit}</TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        metric.status === 'healthy' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                        metric.status === 'warning' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                        metric.status === 'critical' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                      }`}>
-                        {metric.status === 'healthy' && <CheckCircle className="mr-1 h-3 w-3" />}
-                        {metric.status === 'warning' && <AlertTriangle className="mr-1 h-3 w-3" />}
-                        {metric.status === 'critical' && <AlertTriangle className="mr-1 h-3 w-3" />}
-                        {metric.status ? metric.status.charAt(0).toUpperCase() + metric.status.slice(1) : 'N/A'}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
         </CardHeader>
+        <CardContent className="pt-4 px-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Metric</TableHead>
+                <TableHead>Value</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {(data?.systemMetrics || mockSystemMetrics).map((metric) => (
+                <TableRow key={metric.name}>
+                  <TableCell className="font-medium">{metric.name}</TableCell>
+                  <TableCell>{metric.value} {metric.unit}</TableCell>
+                  <TableCell>
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                      metric.status === 'healthy' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                      metric.status === 'warning' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                      metric.status === 'critical' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                      'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                    }`}>
+                      {metric.status === 'healthy' && <CheckCircle className="mr-1 h-3 w-3" />}
+                      {metric.status === 'warning' && <AlertTriangle className="mr-1 h-3 w-3" />}
+                      {metric.status === 'critical' && <AlertTriangle className="mr-1 h-3 w-3" />}
+                      {metric.status ? metric.status.charAt(0).toUpperCase() + metric.status.slice(1) : 'N/A'}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
       </Card>
 
     </div>

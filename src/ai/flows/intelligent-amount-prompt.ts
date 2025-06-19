@@ -43,7 +43,7 @@ const prompt = ai.definePrompt({
   Purchase History: {{{purchaseHistory}}}
   Current Item: {{{currentItem}}}
 
-  Suggested Amount: `,
+  Provide only the suggested amount as a number.`,
 });
 
 const suggestPaymentAmountFlow = ai.defineFlow(
@@ -54,8 +54,10 @@ const suggestPaymentAmountFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
+    // Ensure the output is correctly parsed to a number
+    const amount = parseFloat(output!.suggestedAmount as any);
     return {
-      suggestedAmount: parseFloat(output!.suggestedAmount.toString()),
+      suggestedAmount: isNaN(amount) ? 0 : amount, // Default to 0 if parsing fails
     };
   }
 );

@@ -1,7 +1,7 @@
 'use client';
 
 import { TrendingUp } from 'lucide-react';
-import { CartesianGrid, Line, LineChart, XAxis, YAxis, Tooltip as RechartsTooltip } from 'recharts';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import {
   Card,
   CardContent,
@@ -25,7 +25,6 @@ interface SampleLineChartProps {
   description?: string;
   footerText?: string;
   chartConfig: ChartConfig;
-  aspectRatio?: number;
   className?: string;
 }
 
@@ -37,7 +36,6 @@ export function SampleLineChart({
   description,
   footerText,
   chartConfig,
-  aspectRatio = 16 / 9,
   className
 }: SampleLineChartProps) {
   return (
@@ -52,10 +50,10 @@ export function SampleLineChart({
             accessibilityLayer
             data={data}
             margin={{
-              left: 12,
+              left: 0, // Adjusted for smaller YAxis labels
               right: 12,
-              top: 12,
-              bottom: 12,
+              top: 5,
+              bottom: 5,
             }}
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -64,13 +62,14 @@ export function SampleLineChart({
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 6)} // Example formatter
+              tickFormatter={(value) => typeof value === 'string' ? value.slice(0, 6) : value} 
             />
             <YAxis
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => `$${value / 1000}k`} // Example formatter
+              width={30} // Adjusted for smaller labels
+              tickFormatter={(value) => `$${value / 1000}k`} 
             />
             <ChartTooltip
               cursor={true}
@@ -79,10 +78,10 @@ export function SampleLineChart({
             <Line
               dataKey={dataKey}
               type="natural"
-              stroke={`var(--color-${dataKey})`}
+              stroke={`var(--color-${Object.keys(chartConfig)[0]})`}
               strokeWidth={2}
               dot={{
-                fill: `var(--color-${dataKey})`,
+                fill: `var(--color-${Object.keys(chartConfig)[0]})`,
               }}
               activeDot={{
                 r: 6,

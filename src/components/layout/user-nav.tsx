@@ -9,10 +9,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, Settings, UserCircle } from 'lucide-react'; // User changed to UserCircle for trigger, removed CreditCard, LifeBuoy
+import { LogOut, Settings } from 'lucide-react';
 import type { User } from '@/lib/types';
 import { useMockAuth } from '@/hooks/use-mock-auth';
 import Link from 'next/link';
@@ -45,7 +44,7 @@ export function UserNav({ user }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
+          <DropdownMenuItem asChild className="cursor-pointer">
             <Link href="/settings">
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
@@ -53,7 +52,7 @@ export function UserNav({ user }: UserNavProps) {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout}>
+        <DropdownMenuItem onClick={logout} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

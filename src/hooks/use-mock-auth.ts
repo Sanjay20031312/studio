@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import type { User } from '@/lib/types'; // Assuming User type is defined
+import type { User } from '@/lib/types';
 
 const MOCK_USER_KEY = 'mockUser';
 
@@ -19,20 +19,20 @@ export function useMockAuth() {
       }
     } catch (error) {
       console.error("Failed to parse user from localStorage", error);
-      localStorage.removeItem(MOCK_USER_KEY);
+      localStorage.removeItem(MOCK_USER_KEY); // Clear corrupted data
     }
     setLoading(false);
   }, []);
 
   const login = useCallback(async (email: string, _password?: string) => {
-    // In a real app, you'd fetch user data from an API
+    setLoading(true);
     const mockUserData: User = {
-      id: 'user-123',
-      name: email.split('@')[0] || 'Admin User',
+      id: 'user-admin-blockpay',
+      name: email.split('@')[0] || 'Admin User', // Extract name from email or default
       email: email,
-      avatarUrl: 'https://placehold.co/100x100.png?text=A',
+      avatarUrl: `https://placehold.co/100x100.png?text=${(email.split('@')[0] || 'A').charAt(0).toUpperCase()}`,
       kycStatus: 'verified',
-      walletAddress: '0xMockWalletAddress123',
+      walletAddress: '0xAbCdEf1234567890aBcDeF1234567890AbCdEf12',
       loyaltyPoints: 1500,
       cryptoBalance: 2.5,
       accountStatus: 'active',
@@ -41,13 +41,16 @@ export function useMockAuth() {
     };
     localStorage.setItem(MOCK_USER_KEY, JSON.stringify(mockUserData));
     setUser(mockUserData);
-    router.push('/dashboard');
+    router.push('/dashboard'); // Navigate after setting user
+    // setLoading(false); // No need to set loading false here, page transition will happen
   }, [router]);
 
   const logout = useCallback(() => {
+    setLoading(true);
     localStorage.removeItem(MOCK_USER_KEY);
     setUser(null);
-    router.push('/login');
+    router.push('/login'); // Navigate after clearing user
+    // setLoading(false); // Handled by page transition/useEffect
   }, [router]);
 
   return { user, loading, login, logout };

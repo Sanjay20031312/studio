@@ -3,7 +3,7 @@ import type React from 'react';
 interface PageHeaderProps {
   title: string;
   description?: string;
-  children?: React.ReactNode; // For action buttons or other elements
+  children?: React.ReactNode; 
 }
 
 export function PageHeader({ title, description, children }: PageHeaderProps) {
@@ -17,7 +17,7 @@ export function PageHeader({ title, description, children }: PageHeaderProps) {
           <p className="mt-1 text-muted-foreground">{description}</p>
         )}
       </div>
-      {children && <div className="mt-4 sm:mt-0 flex items-center gap-2">{children}</div>}
+      {children && <div className="mt-4 sm:mt-0 flex items-center gap-2 flex-wrap">{children}</div>}
     </div>
   );
 }

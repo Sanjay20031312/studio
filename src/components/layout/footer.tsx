@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -16,7 +15,7 @@ export function AppFooter({ user }: AppFooterProps) {
   const { logout } = useMockAuth();
 
   return (
-    <footer className="border-t bg-background/80 backdrop-blur-md">
+    <footer className="border-t bg-card text-card-foreground">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         {user ? (
           <div className="flex items-center gap-3">
@@ -34,7 +33,7 @@ export function AppFooter({ user }: AppFooterProps) {
             </Button>
           </div>
         ) : (
-          <div /> // Empty div to maintain layout if user is somehow null
+          <div /> 
         )}
         <div className="text-sm text-muted-foreground">
           © {new Date().getFullYear()} BlockPay. All rights reserved.
